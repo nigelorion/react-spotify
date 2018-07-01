@@ -35,20 +35,15 @@ class Welcome extends Component {
     }
   }
   render() {
-    if (this.state.userLoggedIn) {
-      return (
-        <div className="welcome">
-          <h1>Welcome back {this.state.userData.id}!</h1>
-        </div>
-    )} else {
-      return (
-        <div className="welcome">
-          <h1>search spotify</h1>
-          <p>Welcome to spotify search. This app will allow you to search for tracks based on genre and beats per minute (BPM). Please log in to you spotify to give this app persmission to search for tracks and access your current tracks.</p>
-          <button type="button" className="logInButton" onClick={this.login}>log in</button>
-        </div>
-      )
-    }
+    <div this.state.userLoggedIn={true} className="welcome">
+      <h1>Welcome back {this.state.userData.id}!</h1>
+    </div>
+
+    <div className="welcome">
+      <h1>search spotify</h1>
+      <p>Welcome to spotify search. This app will allow you to search for tracks based on genre and beats per minute (BPM). Please log in to you spotify to give this app persmission to search for tracks and access your current tracks.</p>
+      <button type="button" className="logInButton" onClick={this.login}>log in</button>
+    </div>
   }
 }
 
