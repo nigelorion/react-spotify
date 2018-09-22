@@ -3,48 +3,99 @@ import './Welcome.css'
 import queryString from 'query-string'
 
 class Welcome extends Component {
-  state = {
-    userData: {},
-    userLoggedIn: false,
-    user: ""
+  constructor(props) {
+    super(props);
+    this.state = {
+      userData: {},
+      tracksArr: [],
+      userLoggedIn: false,
+      userToken: undefined
+    }
   }
-  // this.login = this.login.bind(this);
+
   componentDidMount() {
     let parsed = queryString.parse(window.location.search);
-    let userToken = parsed.access_token
-    if (userToken !== undefined){
-      this.setState(this.userLoggedIn: false)
+    let token = parsed.access_token
+    console.log(token)
+    if (token) {
+      this.setState({
+        userToken: token,
+        userLoggedIn: true
+      }, function() {
+        this.userCall()
+      })
     }
+  }
+
+  userCall() {
     fetch('https://api.spotify.com/v1/me', {
-      headers: {'Authorization': 'Bearer ' + userToken}
+      headers: {'Authorization': 'Bearer ' + this.state.userToken}
+      }).then(res => res.json())
+      .then(data => {
+        this.setState({
+          userData: data
+         
+        })
+      })
+      .catch(error => console.error('Error:', error))
+  }
+
+  tempoCall() {
+    fetch("https://api.spotify.com/v1/recommendations?limit=20&market=US&seed_genres=hip-hop&target_tempo=88", {
+      headers: {'Authorization': 'Bearer ' + this.state.userToken}
     }).then(res => res.json())
     .then(data => {
-      this.setState({userData: data})
-      this.setState(this.userLoggedIn: true)
-      console.log(this.state.userData)
+      this.setState({
+        tracksArr: data.tracks
+      })
     })
-    .catch(error => console.error('Error:', error))
   }
-  login = () => {
-    if (this.state.userLoggedIn) {
-      console.log("user logged already")
+
+  login() {
+    if (this.state.userToken !== undefined) {
+      this.userCall()
     } else {
       window.location = "http://localhost:8888/login"
-      console.log(this.state.userLoggedIn)
-      this.componentDidMount()
+      this.userCall()
     }
   }
-  render() {
-    <div this.state.userLoggedIn={true} className="welcome">
-      <h1>Welcome back {this.state.userData.id}!</h1>
-    </div>
 
-    <div className="welcome">
-      <h1>search spotify</h1>
-      <p>Welcome to spotify search. This app will allow you to search for tracks based on genre and beats per minute (BPM). Please log in to you spotify to give this app persmission to search for tracks and access your current tracks.</p>
-      <button type="button" className="logInButton" onClick={this.login}>log in</button>
-    </div>
+  render() {
+    return (
+      <div className="Welcome">
+      <h1>Spotify Search Utility</h1>
+        {this.state.userLoggedIn &&
+          <div>
+            <h1>Welcome back {this.state.userData.id}!</h1>
+            <button type="button" className="tempoButton" onClick={this.tempoCall.bind(this)}>search</button>
+            <div className="searchResults">
+              {this.state.tracksArr.map((track, i) => {
+                return (
+                  <iframe title={track.name} key={i} src={`https://embed.spotify.com/?uri=${track.uri}`}></iframe>        
+                )
+              })}
+            </div>
+          </div>
+        }
+        {!this.state.userLoggedIn &&
+          <div>
+            <p>Welcome to spotify search. This app will allow you to search for tracks based on genre and beats per minute (BPM). Please log in to you spotify to give this app persmission to search for tracks and access your current tracks.</p> 
+            <button type="button" className="logInButton" onClick={this.login.bind(this)}>log in</button> 
+          </div>
+        }
+      </div>
+    );
   }
+
 }
 
 export default Welcome;
+
+
+
+
+
+
+
+
+
