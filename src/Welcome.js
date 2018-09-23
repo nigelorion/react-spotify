@@ -34,7 +34,6 @@ class Welcome extends Component {
       .then(data => {
         this.setState({
           userData: data
-         
         })
       })
       .catch(error => console.error('Error:', error))
@@ -67,7 +66,7 @@ class Welcome extends Component {
         {this.state.userLoggedIn &&
           <div>
             <h1>Welcome back {this.state.userData.id}!</h1>
-            <button type="button" className="tempoButton" onClick={this.tempoCall.bind(this)}>search</button>
+            <button type="button" className="btn" onClick={this.tempoCall.bind(this)}>search</button>
             <div className="searchResults">
               {this.state.tracksArr.map((track, i) => {
                 return (
@@ -78,9 +77,9 @@ class Welcome extends Component {
           </div>
         }
         {!this.state.userLoggedIn &&
-          <div>
+          <div className="loginWrapper">
             <p>Welcome to spotify search. This app will allow you to search for tracks based on genre and beats per minute (BPM). Please log in to you spotify to give this app persmission to search for tracks and access your current tracks.</p> 
-            <button type="button" className="logInButton" onClick={this.login.bind(this)}>log in</button> 
+            <button type="button" className="btn" onClick={this.login.bind(this)}>log in</button> 
           </div>
         }
       </div>
